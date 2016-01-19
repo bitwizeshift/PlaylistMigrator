@@ -25,7 +25,7 @@ public class Migrator {
 	/**
 	 * 
 	 */
-	public void migrate( File base ){
+	public void migrate( ){
 		int current = 1;
 		int total   = files.length;
 		
@@ -48,6 +48,7 @@ public class Migrator {
 					logger.logSkip( current, total, src.getAbsolutePath(), e.getMessage() );
 				}
 			}else if(!src.exists()){
+				System.out.println( src.getAbsolutePath() );
 				logger.logSkip( current, total,src.getName(), "File does not exist" );
 			}else if(src.isDirectory()){
 				logger.logSkip( current, total, src.getName(), "Specifies a directory");
