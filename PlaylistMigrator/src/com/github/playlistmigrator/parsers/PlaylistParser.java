@@ -1,4 +1,4 @@
-package com.github.bitwizeshift.playlistmigrator;
+package com.github.playlistmigrator.parsers;
 
 import java.io.File;
 

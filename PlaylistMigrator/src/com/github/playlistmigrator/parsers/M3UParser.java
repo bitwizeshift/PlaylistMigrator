@@ -1,4 +1,4 @@
-package com.github.bitwizeshift.playlistmigrator;
+package com.github.playlistmigrator.parsers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +12,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
 
 public class M3UParser implements PlaylistParser{
 	
@@ -36,13 +38,14 @@ public class M3UParser implements PlaylistParser{
 				// Skip lines starting with # (They are comments, or extended directives)
 				if( line.startsWith("#") ) continue;
 				
+				// Skip empty lines
+				if( line.isEmpty() ) continue;
+				
 				// Check for URL
 				if( line.startsWith("http://") || line.startsWith("https://") ){
 					// Extract file name
-					String filename = null;
-					String filetype = null;
-					
-					// TODO: extract filename
+					String filename = FilenameUtils.getBaseName( line );
+					String filetype = FilenameUtils.getExtension( line );
 					
 					// Download the file and store it as a temporary
 					ReadableByteChannel in=Channels.newChannel( new URL(line).openStream() );
