@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 import com.github.playlistmigrator.loggers.MigratorLogger;
 
@@ -28,7 +31,16 @@ public class Migrator {
 	public void migrate( ){
 		int current = 1;
 		int total   = files.length;
+		String base = null;
+        Path pathBase = null;
 		
+		// Find the common ancestor path of all files
+		if( !config.forcesFlatten() ){
+			base = commonPath(this.files);
+	        pathBase = Paths.get(base);
+		}
+		
+		// Migrate all files
 		for( File src : this.files ){
 			if( src.isFile() ){
 
@@ -39,7 +51,20 @@ public class Migrator {
 	
 						copyFile( src, destFile );
 					}else{
-						//destFile = new File( );
+						
+						String path = src.getAbsolutePath();
+
+				        Path pathAbsolute = Paths.get( src.getParentFile().getAbsolutePath() );
+				        Path pathRelative = pathBase.relativize(pathAbsolute);
+						
+						File destPath = new File( dest.getAbsolutePath() + File.separator + pathRelative.toString() );
+						if( !destPath.exists() || !destPath.isDirectory() ){
+							destPath.mkdirs();
+							System.out.println("Creating directory: " + pathRelative.toString() );
+						}
+						destFile = new File( destPath.getAbsolutePath() + File.separator + src.getName() );
+						
+						copyFile( src, destFile );
 					}
 					logger.logCopy( current, total, src.getAbsolutePath(), dest.getAbsolutePath() );
 				}catch( IOException e ){
@@ -82,5 +107,47 @@ public class Migrator {
 	    }
 	}
 	
+	public static String commonPath(String[] paths){
+		String commonPath = "";
+		String[][] directories = new String[paths.length][];
+		
+		// Split all paths into a list of directory arrays
+		for( int i = 0; i < paths.length; ++i ){
+			directories[i] = paths[i].split( Pattern.quote( System.getProperty("file.separator") ) );
+		}
+		
+		// Search through directory pieces to find matches
+		for( int i = 0; i < directories[0].length; ++i){
+			String thisFolder = directories[0][i];
+			boolean allMatched = true;
+			
+			for( int j = 1; j < directories.length && allMatched; j++ ){
+				// If there are no more directories, stop looking
+				if(directories[j].length < i){
+					allMatched = false;
+					break;
+				}
+				//check if it matched
+				allMatched &= directories[j][i].equals(thisFolder); 
+			}
+			
+			//if they all matched this directory name
+			if(allMatched){
+				commonPath += thisFolder + File.separator; //add it to the answer
+			}else{
+				break;
+			}
+		}
+		return commonPath;
+	}
+	
+	public static String commonPath(File[] files){
+		String[] paths = new String[files.length];
+		for( int i = 0; i < paths.length; ++i ){
+			paths[i] = files[i].getAbsolutePath();
+		}
+		return commonPath(paths);
+	}
+
 	
 }

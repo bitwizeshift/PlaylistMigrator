@@ -17,6 +17,7 @@ public class NormalLogger implements MigratorLogger{
 	 * @param from the source file being copied
 	 * @param to the destination of the copy
 	 */
+	@Override
 	public void logCopy( int current, int total, String from, String to ){
 		String filename = FilenameUtils.getName( from );
 		System.out.println( String.format(COPY_FORMAT, current, total, filename ));		
@@ -30,6 +31,7 @@ public class NormalLogger implements MigratorLogger{
 	 * @param filename the source file being copied
 	 * @param reason the reason for skipping
 	 */
+	@Override
 	public void logSkip( int current, int total, String filename, String reason ){
 		String name = FilenameUtils.getName( filename );
 		System.out.println( String.format(SKIP_FORMAT, current, total, name ));		
@@ -43,8 +45,12 @@ public class NormalLogger implements MigratorLogger{
 	 * @param filename the source file being copied
 	 * @param message the error message
 	 */
+	@Override
 	public void logError( int current, int total, String filename, String message ){
 		String name = FilenameUtils.getName( filename );
 		System.out.println( String.format(ERROR_FORMAT, current, total, name ));
 	}
+	
+	@Override
+	public void logCreate( String directory ){}
 }

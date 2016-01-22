@@ -32,4 +32,5 @@ public interface MigratorLogger {
 	 */
 	public void logError( int current, int total, String filename, String message );
 	
+	public void logCreate(String directory);
 }

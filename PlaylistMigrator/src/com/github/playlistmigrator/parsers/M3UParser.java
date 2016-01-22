@@ -57,7 +57,7 @@ public class M3UParser implements PlaylistParser{
 				if( line.startsWith("http://") || line.startsWith("https://") ){
 					// Extract file name
 					String filename = FilenameUtils.getBaseName( line );
-					String filetype = FilenameUtils.getExtension( line );
+					String filetype = "." + FilenameUtils.getExtension( line );
 					
 					try{
 						// Download the file and store it as a temporary
@@ -77,7 +77,6 @@ public class M3UParser implements PlaylistParser{
 					if( line.startsWith("~" + File.separator) ){
 						line = line.replace( "^~", System.getProperty("user.home") );
 					}
-					System.out.println( line );
 					files.add( new File(line) );
 				}
 			}

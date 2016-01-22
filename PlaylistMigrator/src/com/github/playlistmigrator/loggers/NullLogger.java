@@ -16,6 +16,7 @@ public class NullLogger implements MigratorLogger{
 	 * @param from the source file being copied
 	 * @param to the destination of the copy
 	 */
+	@Override
 	public void logCopy( int current, int total, String from, String to ){
 		// do nothing
 	}
@@ -28,6 +29,7 @@ public class NullLogger implements MigratorLogger{
 	 * @param filename the source file being copied
 	 * @param reason the reason for skipping
 	 */
+	@Override
 	public void logSkip( int current, int total, String filename, String reason ){
 		// do nothing
 	}
@@ -41,6 +43,11 @@ public class NullLogger implements MigratorLogger{
 	 * @param message the error message
 	 */
 	public void logError( int current, int total, String filename, String message ){
+		// do nothing
+	}
+
+	@Override
+	public void logCreate(String directory) {
 		// do nothing
 	}
 
