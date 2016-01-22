@@ -16,11 +16,11 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
 
-public class M3UParser implements PlaylistParser{
+public class PlsParser implements PlaylistParser{
 
 	private final File file;
 	
-	public M3UParser( final File file ){
+	public PlsParser( final File file ){
 		this.file = file;
 	}
 	
@@ -38,37 +38,18 @@ public class M3UParser implements PlaylistParser{
 					) 
 			      );
 			
-			String line = null;
+			String line = br.readLine();
+			
+			// If the first line isn't "[playlist]" it isn't a valid playlist
+			// so return an empty list
+			if( !line.startsWith("[playlist]") ) return new File[0];
+			
 			while((line = br.readLine())!= null){
 				line = line.trim();
-					
-				// Skip lines starting with # (They are comments, or extended directives)
-				if( line.startsWith("#") ) continue;
-				
-				// Skip empty lines
-				if( line.isEmpty() ) continue;
-								
-				// Check for URL
-				if( line.startsWith("http://") || line.startsWith("https://") ){
-					// Extract file name
-					String filename = FilenameUtils.getBaseName( line );
-					String filetype = "." + FilenameUtils.getExtension( line );
-					
-					try{
-						// Download the file and store it as a temporary
-						ReadableByteChannel in=Channels.newChannel( new URL(line).openStream() );
-						files.add( File.createTempFile( filename, filetype ) );
-						FileOutputStream fout = new FileOutputStream( filename );
-						FileChannel out       = fout.getChannel();
-						out.transferFrom(in, 0, Long.MAX_VALUE);
-						
-						fout.close();
-						out.close();
-					}catch(IOException e){
-						System.out.println("File at " + line + " not found.");
-					}
-				}else{
-					// Must be a file. Correct *nix style '~' paths
+									
+				// Find  "File#=" statements and add the files to the list
+				if( line.startsWith("File") ){
+					line = line.substring(line.indexOf("=") + 1);
 					if( line.startsWith("~" + File.separator) ){
 						line = line.replace( "^~", System.getProperty("user.home") );
 					}

@@ -21,6 +21,8 @@ public class ParserFactory {
 		case "m3u": /* no break */
 		case "m3u8":
 			return new M3UParser( file );
+		case "pls":
+			return new PlsParser( file );
 		default:
 			break;
 		}
