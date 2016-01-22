@@ -1,0 +1,72 @@
+<project name="PlaylistMigrator" xmlns:ivy="antlib:org.apache.ivy.ant" default="build" basedir=".">
+  <description>
+    Buildfile for PlaylistMigrator
+  </description>
+  
+  <tstamp>
+    <format property="time.stamp" pattern="yyyy-MM-dd_HH-mm-ss"/>
+  </tstamp>
+	
+  <!-- set global properties for this build -->
+  <property name="source.dir" value="src"/>
+  <property name="lib.dir"    value="lib"/>
+  <property name="class.dir"  value="bin"/>
+  <property name="jar.dir"    value="dist"/>
+  <property name="jar.file"   value="${jar.dir}/${ant.project.name}.jar"/>
+  <property name="main-class" value="com.github.playlistmigrator.Main"/>
+	
+  <!-- Delete the ${build} and ${dist} directory trees -->
+  <target name="clean" description="delete old generated files">
+    <delete dir="${class.dir}"/>
+    <delete dir="${jar.dir}"/>
+  </target>
+	
+  <target name="clean-all" depends="clean" description="delete all generated or retrieved files">
+  	<delete dir="${lib.dir}"/>
+  	<ivy:cleancache />
+  </target>
+	
+  <!-- Retrieve dependencies -->
+  <target name="resolve" description="retrieve dependencies with ivy">
+    <ivy:retrieve conf="sources" pattern="lib/[artifact](-[classifier]).[ext]"/>
+    <ivy:retrieve conf="binaries" pattern="lib/[artifact](-[classifier]).[ext]"/>
+  </target>
+
+  <!-- Add any dependencies to the classpath -->
+  <path id="libraries.path">    
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- Compile the java code from ${src} into ${build} -->
+  <target name="compile" depends="resolve" description="build class files">
+    <mkdir dir="${class.dir}"/>
+    <javac srcdir="${source.dir}" destdir="${class.dir}" includeantruntime="false">
+      <classpath refid="libraries.path"/>
+    </javac>
+  </target>
+
+  <!-- Build the executable jar -->
+  <target name="build" depends="compile" description="generate the distribution">
+  	<mkdir dir="${jar.dir}"/>
+    <mkdir dir="${jar.dir}/${lib.dir}"/>
+    <copy todir="${jar.dir}/${lib.dir}" flatten="true">
+      <path refid="libraries.path"/>
+    </copy>
+
+    <manifestclasspath property="manifest.classpath" jarfile="${jar.file}">
+      <classpath refid="libraries.path"/>
+    </manifestclasspath>
+
+    <jar destfile="${jar.file}" basedir="${class.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}"/>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+	
+  <!-- Build the jar -->
+
+</project>
