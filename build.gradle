@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'maven'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '4.9'
+}
+
+jar {
+    baseName = 'PlaylistMigrator'
+    version =  '1.0.0'
+    manifest {
+        attributes (
+            'Main-Class': 'com.rodusek.playlistmigrator.Main',
+            'Class-Path': configurations.compile.collect { it.toURI().toString()}.join(' ')
+        )
+    }
+}
+
+application {
+    mainClassName = "com.rodusek.playlistmigrator.Main"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

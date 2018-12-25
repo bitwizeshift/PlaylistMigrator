@@ -11,26 +11,18 @@ It copies all files in a given playlist over to a specified output. This can be 
 - [x] Support for `.pls` playlist
 - [x] Support for `.m3u` playlist
 
-### 1. Preserve the directory structure. 
-
-This method attempts to discover the nearest ancestor of all the songs in a playlist, and -- if found -- will 
-create directories corresponding to the path to each song so that each song exists in their respective directories.
-
-### 2. Flatten the directory structure
-
-This method copies all files into the same directory, regardless of what directory they originated in. This is the
-simpler option, however can cause collisions if two songs share the same name.
-
 ## How to Build
 
-To build this program, just run `ant build` (or just `ant`, as build is default).
-The built jar can then be found in `/dist/`, and the libraries involved will be in `/dist/lib`.
+From terminal, invoke:
+```sh
+./gradlew build # 'gradlew.bat build' on Windows
+```
 
-To clean up everything, run either `ant clean` for a quick clean, or `ant clean-all` to clear the ivy cache.
+The resulting binary will be in `build/libs/PlaylistMigrator-<version>.jar`
 
 ## How to Use
 
-This program is (currently) command-line only. To run it, simply run `java -jar PlaylistMigrator.jar <playlist file> <destination> [options...]`
+This program is command-line only. To run it, simply run `java -jar PlaylistMigrator.jar <playlist file> <destination> [options...]`
 
 For a full list of options, pass either `-h` or `--help`.
 
